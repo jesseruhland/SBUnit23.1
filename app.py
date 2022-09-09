@@ -17,6 +17,7 @@ connect_db(app)
 
 @app.route("/")
 def redirect_for_now():
+    """as directed by the assignment, this currently redirects to /users"""
     return redirect ('/users')
 
 
@@ -28,6 +29,10 @@ def list_users():
 
 @app.route("/users/new", methods=['POST', 'GET'])
 def add_user():
+    """handle new user entry,
+    on GET request, display new user entry form,
+    on POST request, save new user from form to db and display updated user list
+    """
     method = request.method
     if method == 'GET':
         return render_template('new-user.html')
@@ -50,11 +55,16 @@ def add_user():
 
 @app.route("/users/<int:user_id>")
 def show_user_details(user_id):
+    """display user detail page from db"""
     user = User.query.get_or_404(user_id)
     return render_template('user-detail.html', user=user)
 
 @app.route("/users/<int:user_id>/edit", methods=['POST', 'GET'])
 def edit_user(user_id):
+    """handle edit entry,
+    on GET request, display edit user form,
+    on POST request, save updated user from form to db and display updated user list
+    """
     method = request.method
     if method == 'GET':
         user = User.query.get(user_id)
@@ -78,11 +88,12 @@ def edit_user(user_id):
         return redirect('/users')
 
 @app.route("/users/<int:user_id>/delete", methods=['POST'])
-def do_thing6(user_id):
+def delete_user(user_id):
+    """delete user details from db"""
     user = User.query.get(user_id)
 
     User.query.filter_by(id=user_id).delete()
     db.session.commit()
 
-    flash(f"{user.first_name} {user.last_name} has been successfully updated!")
+    flash(f"{user.first_name} {user.last_name} has been successfully deleted!")
     return redirect('/users')
